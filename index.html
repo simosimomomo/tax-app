@@ -1,271 +1,252 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.5">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Hiragino Sans'}
-    span.s1 {font: 12.0px 'Hiragino Sans'}
-    span.s2 {font: 12.0px Helvetica}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>税金・社会保険料 可視化アプリ</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: #f7f9fc;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result-section {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            gap: 20px;
+        }
+        .chart-container {
+            flex: 1 1 300px;
+            position: relative;
+        }
+        .details-container {
+            flex: 1 1 300px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .detail-item.total {
+            font-weight: bold;
+            border-bottom: none;
+            font-size: 1.1rem;
+            color: #e74c3c;
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="ja"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;<span class="s1">税金・社会保険料</span> <span class="s1">可視化アプリ</span>&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f7f9fc;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #333;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>justify-content: center;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.container {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #fff;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 4px 12px rgba(0,0,0,0.1);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 30px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-width: 800px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>h1 {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #2c3e50;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.input-group {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 15px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>label {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: block;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 5px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>input[type="number"] {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid #ccc;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 5px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>box-sizing: border-box;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>button {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #3498db;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #fff;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 5px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.1rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transition: background-color 0.3s;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>button:hover {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #2980b9;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.result-section {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>flex-wrap: wrap;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 30px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>gap: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.chart-container {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>flex: 1 1 300px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>position: relative;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.details-container {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>flex: 1 1 300px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f8f9fa;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.detail-item {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>justify-content: space-between;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-bottom: 1px solid #eee;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding-bottom: 5px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.detail-item.total {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-bottom: none;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.1rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #e74c3c;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 15px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="container"&gt;</p>
-<p class="p3"><span class="s2"><span class="Apple-converted-space">    </span>&lt;h1&gt;</span>あなたの収入、税金でどれくらい引かれてる？<span class="s2">&lt;/h1&gt;</span></p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="input-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="income"&gt;<span class="s1">年収（額面・円）</span>&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="number" id="income" placeholder="<span class="s1">例</span>: 4000000" step="10000"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="input-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="spending"&gt;<span class="s1">年間の生活費・買い物等の支出（税込・円）</span>&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="number" id="spending" placeholder="<span class="s1">例</span>: 2000000" step="10000"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="calculateTaxes()"&gt;<span class="s1">計算してグラフを表示</span>&lt;/button&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="result-section" id="resultSection" style="display: none;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="chart-container"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;canvas id="taxChart"&gt;&lt;/canvas&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="details-container" id="detailsList"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let taxChartInstance = null;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function calculateTaxes() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const income = parseInt(document.getElementById('income').value) || 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const spending = parseInt(document.getElementById('spending').value) || 0;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (income === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>alert('<span class="s1">年収を入力してください。</span>');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// 1. <span class="s1">社会保険料の概算</span> (<span class="s1">約</span>15%)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const socialInsurance = Math.floor(income * 0.15);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// 2. <span class="s1">給与所得控除の概算計算</span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>let incomeDeduction = 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (income &lt;= 1625000) incomeDeduction = 550000;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (income &lt;= 1800000) incomeDeduction = income * 0.4 - 100000;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (income &lt;= 3600000) incomeDeduction = income * 0.3 + 80000;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (income &lt;= 6600000) incomeDeduction = income * 0.2 + 440000;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (income &lt;= 8500000) incomeDeduction = income * 0.1 + 1100000;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else incomeDeduction = 1950000;</p>
-<p class="p2"><br></p>
-<p class="p3"><span class="s2"><span class="Apple-converted-space">        </span>// 3. </span>課税所得の概算<span class="s2"> (</span>基礎控除を所得税<span class="s2">48</span>万、住民税<span class="s2">43</span>万とする<span class="s2">)</span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>let taxableIncomeTax = income - socialInsurance - incomeDeduction - 480000;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (taxableIncomeTax &lt; 0) taxableIncomeTax = 0;</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>let taxableResidentTax = income - socialInsurance - incomeDeduction - 430000;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (taxableResidentTax &lt; 0) taxableResidentTax = 0;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// 4. <span class="s1">所得税の概算</span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>let incomeTax = 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (taxableIncomeTax &lt;= 1949000) incomeTax = taxableIncomeTax * 0.05;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (taxableIncomeTax &lt;= 3299000) incomeTax = taxableIncomeTax * 0.10 - 97500;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (taxableIncomeTax &lt;= 6949000) incomeTax = taxableIncomeTax * 0.20 - 427500;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (taxableIncomeTax &lt;= 8999000) incomeTax = taxableIncomeTax * 0.23 - 636000;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (taxableIncomeTax &lt;= 17999000) incomeTax = taxableIncomeTax * 0.33 - 1536000;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else incomeTax = taxableIncomeTax * 0.40 - 2796000;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>incomeTax = Math.floor(incomeTax);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// 5. <span class="s1">住民税の概算</span> (<span class="s1">約</span>10% + <span class="s1">均等割</span>5000<span class="s1">円</span>)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const residentTax = taxableResidentTax &gt; 0 ? Math.floor(taxableResidentTax * 0.10) + 5000 : 0;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// 6. <span class="s1">消費税の概算</span> (<span class="s1">支出は税込と仮定し、</span>10%<span class="s1">計算：支出</span> × 10/110)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// ※<span class="s1">軽減税率</span>(8%)<span class="s1">は考慮せず一律</span>10%<span class="s1">で計算</span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const consumptionTax = Math.floor(spending * (10 / 110));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const pureSpending = spending - consumptionTax; // <span class="s1">税抜の支出</span></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// 7. <span class="s1">手元に残るお金</span> (<span class="s1">貯金等</span>)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let remainingMoney = income - socialInsurance - incomeTax - residentTax - spending;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (remainingMoney &lt; 0) remainingMoney = 0;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// <span class="s1">総負担額</span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const totalTaxes = socialInsurance + incomeTax + residentTax + consumptionTax;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// UI<span class="s1">の更新</span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>updateUI(income, socialInsurance, incomeTax, residentTax, consumptionTax, pureSpending, remainingMoney, totalTaxes);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>drawChart(socialInsurance, incomeTax, residentTax, consumptionTax, pureSpending, remainingMoney);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function updateUI(income, soc, incTax, resTax, consTax, spend, remain, total) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('resultSection').style.display = 'flex';</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const detailsHtml = `</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;<span class="s1">内訳（年間概算）</span>&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="detail-item"&gt;&lt;span&gt;<span class="s1">額面年収</span>:&lt;/span&gt; &lt;span&gt;${income.toLocaleString()} <span class="s1">円</span>&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="detail-item"&gt;&lt;span&gt;<span class="s1">社会保険料</span>:&lt;/span&gt; &lt;span&gt;${soc.toLocaleString()} <span class="s1">円</span>&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="detail-item"&gt;&lt;span&gt;<span class="s1">所得税</span>:&lt;/span&gt; &lt;span&gt;${incTax.toLocaleString()} <span class="s1">円</span>&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="detail-item"&gt;&lt;span&gt;<span class="s1">住民税</span>:&lt;/span&gt; &lt;span&gt;${resTax.toLocaleString()} <span class="s1">円</span>&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="detail-item"&gt;&lt;span&gt;<span class="s1">消費税</span>:&lt;/span&gt; &lt;span&gt;${consTax.toLocaleString()} <span class="s1">円</span>&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="detail-item"&gt;&lt;span&gt;<span class="s1">その他の支出</span>(<span class="s1">税抜</span>):&lt;/span&gt; &lt;span&gt;${spend.toLocaleString()} <span class="s1">円</span>&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="detail-item"&gt;&lt;span&gt;<span class="s1">手元に残るお金</span>(<span class="s1">貯蓄等</span>):&lt;/span&gt; &lt;span&gt;${remain.toLocaleString()} <span class="s1">円</span>&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="detail-item total"&gt;&lt;span&gt;<span class="s1">国・自治体に納めた総額</span>:&lt;/span&gt; &lt;span&gt;${total.toLocaleString()} <span class="s1">円</span>&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('detailsList').innerHTML = detailsHtml;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function drawChart(soc, incTax, resTax, consTax, spend, remain) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const ctx = document.getElementById('taxChart').getContext('2d');</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p3"><span class="s2"><span class="Apple-converted-space">        </span>// </span>既存のグラフがあれば破棄して再描画</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (taxChartInstance) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>taxChartInstance.destroy();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>taxChartInstance = new Chart(ctx, {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>type: 'pie',</p>
-<p class="p1"><span class="Apple-converted-space">            </span>data: {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>labels: ['<span class="s1">社会保険料</span>', '<span class="s1">所得税</span>', '<span class="s1">住民税</span>', '<span class="s1">消費税</span>', '<span class="s1">その他の支出</span>(<span class="s1">税抜</span>)', '<span class="s1">手元に残るお金</span>'],</p>
-<p class="p1"><span class="Apple-converted-space">                </span>datasets: [{</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>data: [soc, incTax, resTax, consTax, spend, remain],</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>backgroundColor: [</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>'#e74c3c', // <span class="s1">赤</span>: <span class="s1">社会保険</span></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>'#e67e22', // <span class="s1">オレンジ</span>: <span class="s1">所得税</span></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>'#f1c40f', // <span class="s1">黄色</span>: <span class="s1">住民税</span></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>'#9b59b6', // <span class="s1">紫</span>: <span class="s1">消費税</span></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>'#95a5a6', // <span class="s1">灰</span>: <span class="s1">支出</span></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>'#2ecc71'<span class="Apple-converted-space">  </span>// <span class="s1">緑</span>: <span class="s1">残り</span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>borderWidth: 1</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}]</p>
-<p class="p1"><span class="Apple-converted-space">            </span>},</p>
-<p class="p1"><span class="Apple-converted-space">            </span>options: {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>responsive: true,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>maintainAspectRatio: false,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>plugins: {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>legend: {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>position: 'bottom',</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>},</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>tooltip: {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>callbacks: {</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>label: function(context) {</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>let label = context.label || '';</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>if (label) {</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>label += ': ';</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>if (context.parsed !== null) {</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>label += new Intl.NumberFormat('ja-JP').format(context.parsed) + ' <span class="s1">円</span>';</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>return label;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+<div class="container">
+    <h1>あなたの収入、税金でどれくらい引かれてる？</h1>
+    
+    <div class="input-group">
+        <label for="income">年収（額面・円）</label>
+        <input type="number" id="income" placeholder="例: 4000000" step="10000">
+    </div>
+    
+    <div class="input-group">
+        <label for="spending">年間の生活費・買い物等の支出（税込・円）</label>
+        <input type="number" id="spending" placeholder="例: 2000000" step="10000">
+    </div>
+    
+    <button onclick="calculateTaxes()">計算してグラフを表示</button>
+
+    <div class="result-section" id="resultSection" style="display: none;">
+        <div class="chart-container">
+            <canvas id="taxChart"></canvas>
+        </div>
+        <div class="details-container" id="detailsList">
+            </div>
+    </div>
+</div>
+
+<script>
+    let taxChartInstance = null;
+
+    function calculateTaxes() {
+        const income = parseInt(document.getElementById('income').value) || 0;
+        const spending = parseInt(document.getElementById('spending').value) || 0;
+
+        if (income === 0) {
+            alert('年収を入力してください。');
+            return;
+        }
+
+        // 1. 社会保険料の概算 (約15%)
+        const socialInsurance = Math.floor(income * 0.15);
+
+        // 2. 給与所得控除の概算計算
+        let incomeDeduction = 0;
+        if (income <= 1625000) incomeDeduction = 550000;
+        else if (income <= 1800000) incomeDeduction = income * 0.4 - 100000;
+        else if (income <= 3600000) incomeDeduction = income * 0.3 + 80000;
+        else if (income <= 6600000) incomeDeduction = income * 0.2 + 440000;
+        else if (income <= 8500000) incomeDeduction = income * 0.1 + 1100000;
+        else incomeDeduction = 1950000;
+
+        // 3. 課税所得の概算 (基礎控除を所得税48万、住民税43万とする)
+        let taxableIncomeTax = income - socialInsurance - incomeDeduction - 480000;
+        if (taxableIncomeTax < 0) taxableIncomeTax = 0;
+        
+        let taxableResidentTax = income - socialInsurance - incomeDeduction - 430000;
+        if (taxableResidentTax < 0) taxableResidentTax = 0;
+
+        // 4. 所得税の概算
+        let incomeTax = 0;
+        if (taxableIncomeTax <= 1949000) incomeTax = taxableIncomeTax * 0.05;
+        else if (taxableIncomeTax <= 3299000) incomeTax = taxableIncomeTax * 0.10 - 97500;
+        else if (taxableIncomeTax <= 6949000) incomeTax = taxableIncomeTax * 0.20 - 427500;
+        else if (taxableIncomeTax <= 8999000) incomeTax = taxableIncomeTax * 0.23 - 636000;
+        else if (taxableIncomeTax <= 17999000) incomeTax = taxableIncomeTax * 0.33 - 1536000;
+        else incomeTax = taxableIncomeTax * 0.40 - 2796000;
+        incomeTax = Math.floor(incomeTax);
+
+        // 5. 住民税の概算 (約10% + 均等割5000円)
+        const residentTax = taxableResidentTax > 0 ? Math.floor(taxableResidentTax * 0.10) + 5000 : 0;
+
+        // 6. 消費税の概算 (支出は税込と仮定し、10%計算：支出 × 10/110)
+        // ※軽減税率(8%)は考慮せず一律10%で計算
+        const consumptionTax = Math.floor(spending * (10 / 110));
+        const pureSpending = spending - consumptionTax; // 税抜の支出
+
+        // 7. 手元に残るお金 (貯金等)
+        let remainingMoney = income - socialInsurance - incomeTax - residentTax - spending;
+        if (remainingMoney < 0) remainingMoney = 0;
+
+        // 総負担額
+        const totalTaxes = socialInsurance + incomeTax + residentTax + consumptionTax;
+
+        // UIの更新
+        updateUI(income, socialInsurance, incomeTax, residentTax, consumptionTax, pureSpending, remainingMoney, totalTaxes);
+        drawChart(socialInsurance, incomeTax, residentTax, consumptionTax, pureSpending, remainingMoney);
+    }
+
+    function updateUI(income, soc, incTax, resTax, consTax, spend, remain, total) {
+        document.getElementById('resultSection').style.display = 'flex';
+        
+        const detailsHtml = `
+            <h3>内訳（年間概算）</h3>
+            <div class="detail-item"><span>額面年収:</span> <span>${income.toLocaleString()} 円</span></div>
+            <div class="detail-item"><span>社会保険料:</span> <span>${soc.toLocaleString()} 円</span></div>
+            <div class="detail-item"><span>所得税:</span> <span>${incTax.toLocaleString()} 円</span></div>
+            <div class="detail-item"><span>住民税:</span> <span>${resTax.toLocaleString()} 円</span></div>
+            <div class="detail-item"><span>消費税:</span> <span>${consTax.toLocaleString()} 円</span></div>
+            <div class="detail-item"><span>その他の支出(税抜):</span> <span>${spend.toLocaleString()} 円</span></div>
+            <div class="detail-item"><span>手元に残るお金(貯蓄等):</span> <span>${remain.toLocaleString()} 円</span></div>
+            <div class="detail-item total"><span>国・自治体に納めた総額:</span> <span>${total.toLocaleString()} 円</span></div>
+        `;
+        document.getElementById('detailsList').innerHTML = detailsHtml;
+    }
+
+    function drawChart(soc, incTax, resTax, consTax, spend, remain) {
+        const ctx = document.getElementById('taxChart').getContext('2d');
+        
+        // 既存のグラフがあれば破棄して再描画
+        if (taxChartInstance) {
+            taxChartInstance.destroy();
+        }
+
+        taxChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['社会保険料', '所得税', '住民税', '消費税', 'その他の支出(税抜)', '手元に残るお金'],
+                datasets: [{
+                    data: [soc, incTax, resTax, consTax, spend, remain],
+                    backgroundColor: [
+                        '#e74c3c', // 赤: 社会保険
+                        '#e67e22', // オレンジ: 所得税
+                        '#f1c40f', // 黄色: 住民税
+                        '#9b59b6', // 紫: 消費税
+                        '#95a5a6', // 灰: 支出
+                        '#2ecc71'  // 緑: 残り
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += new Intl.NumberFormat('ja-JP').format(context.parsed) + ' 円';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+
 </body>
 </html>
