@@ -29,33 +29,55 @@
             color: #2c3e50;
             margin-bottom: 20px;
         }
-        .input-group {
+        .section-title {
+            font-size: 1.2rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 20px;
             margin-bottom: 15px;
+        }
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .input-group {
+            margin-bottom: 5px;
         }
         label {
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
+            font-size: 0.9rem;
         }
         input[type="number"] {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 1rem;
             box-sizing: border-box;
         }
+        .summary-box {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: right;
+        }
         button {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             background-color: #3498db;
             color: #fff;
             border: none;
             border-radius: 5px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
             cursor: pointer;
             transition: background-color 0.3s;
-            margin-top: 10px;
+            margin-top: 25px;
         }
         button:hover {
             background-color: #2980b9;
@@ -82,6 +104,7 @@
             margin-bottom: 10px;
             border-bottom: 1px solid #eee;
             padding-bottom: 5px;
+            font-size: 0.95rem;
         }
         .detail-item.total {
             font-weight: bold;
@@ -97,14 +120,57 @@
 <div class="container">
     <h1>あなたの収入、税金でどれくらい引かれてる？</h1>
     
+    <div class="section-title">収入</div>
     <div class="input-group">
-        <label for="income">年収（額面・円）</label>
-        <input type="number" id="income" placeholder="例: 4000000" step="10000">
+        <label for="monthlyIncome">月収（額面・円）</label>
+        <input type="number" id="monthlyIncome" placeholder="例: 300000" step="10000" oninput="calculateLiveTotals()">
     </div>
-    
-    <div class="input-group">
-        <label for="spending">年間の生活費・買い物等の支出（税込・円）</label>
-        <input type="number" id="spending" placeholder="例: 2000000" step="10000">
+    <div class="summary-box">
+        自動計算 ＞ 年収: <span id="liveAnnualIncome">0</span> 円
+    </div>
+
+    <div class="section-title">月々の支出・貯金</div>
+    <div class="input-grid">
+        <div class="input-group">
+            <label for="rent">家賃</label>
+            <input type="number" id="rent" class="expense-input" placeholder="例: 80000" oninput="calculateLiveTotals()">
+        </div>
+        <div class="input-group">
+            <label for="utilities">光熱費（電気・ガス・水道）</label>
+            <input type="number" id="utilities" class="expense-input" placeholder="例: 15000" oninput="calculateLiveTotals()">
+        </div>
+        <div class="input-group">
+            <label for="telecom">通信費</label>
+            <input type="number" id="telecom" class="expense-input" placeholder="例: 10000" oninput="calculateLiveTotals()">
+        </div>
+        <div class="input-group">
+            <label for="transport">移動費（交通費・ガソリン）</label>
+            <input type="number" id="transport" class="expense-input" placeholder="例: 10000" oninput="calculateLiveTotals()">
+        </div>
+        <div class="input-group">
+            <label for="food">食費</label>
+            <input type="number" id="food" class="expense-input" placeholder="例: 50000" oninput="calculateLiveTotals()">
+        </div>
+        <div class="input-group">
+            <label for="social">交際費</label>
+            <input type="number" id="social" class="expense-input" placeholder="例: 20000" oninput="calculateLiveTotals()">
+        </div>
+        <div class="input-group">
+            <label for="hobby">趣味・娯楽費</label>
+            <input type="number" id="hobby" class="expense-input" placeholder="例: 20000" oninput="calculateLiveTotals()">
+        </div>
+        <div class="input-group">
+            <label for="savings">貯金</label>
+            <input type="number" id="savings" class="expense-input" placeholder="例: 50000" oninput="calculateLiveTotals()">
+        </div>
+        <div class="input-group">
+            <label for="other">その他</label>
+            <input type="number" id="other" class="expense-input" placeholder="例: 10000" oninput="calculateLiveTotals()">
+        </div>
+    </div>
+    <div class="summary-box">
+        自動計算 ＞ 年間の生活費・支出合計: <span id="liveAnnualExpenses">0</span> 円<br>
+        <span style="font-size: 0.8rem; font-weight: normal; color: #666;">（※貯金は上記合計に含みません）</span>
     </div>
     
     <button onclick="calculateTaxes()">計算してグラフを表示</button>
@@ -121,14 +187,45 @@
 <script>
     let taxChartInstance = null;
 
+    // 入力するたびに年額を自動計算して表示する機能
+    function calculateLiveTotals() {
+        const monthlyIncome = parseInt(document.getElementById('monthlyIncome').value) || 0;
+        document.getElementById('liveAnnualIncome').textContent = (monthlyIncome * 12).toLocaleString();
+
+        const expenses = ['rent', 'utilities', 'telecom', 'transport', 'food', 'social', 'hobby', 'other'];
+        let monthlyExpenses = 0;
+        expenses.forEach(id => {
+            monthlyExpenses += parseInt(document.getElementById(id).value) || 0;
+        });
+        document.getElementById('liveAnnualExpenses').textContent = (monthlyExpenses * 12).toLocaleString();
+    }
+
     function calculateTaxes() {
-        const income = parseInt(document.getElementById('income').value) || 0;
-        const spending = parseInt(document.getElementById('spending').value) || 0;
+        const monthlyIncome = parseInt(document.getElementById('monthlyIncome').value) || 0;
+        const income = monthlyIncome * 12;
 
         if (income === 0) {
-            alert('年収を入力してください。');
+            alert('月収を入力してください。');
             return;
         }
+
+        // 月々の入力値を取得
+        const rent = parseInt(document.getElementById('rent').value) || 0;
+        const utilities = parseInt(document.getElementById('utilities').value) || 0;
+        const telecom = parseInt(document.getElementById('telecom').value) || 0;
+        const transport = parseInt(document.getElementById('transport').value) || 0;
+        const food = parseInt(document.getElementById('food').value) || 0;
+        const social = parseInt(document.getElementById('social').value) || 0;
+        const hobby = parseInt(document.getElementById('hobby').value) || 0;
+        const other = parseInt(document.getElementById('other').value) || 0;
+        const savings = parseInt(document.getElementById('savings').value) || 0;
+
+        // 年間の計算
+        const annualRent = rent * 12;
+        const annualSavings = savings * 12;
+        // 消費税がかかる生活費（家賃・貯金以外）
+        const annualTaxableSpending = (utilities + telecom + transport + food + social + hobby + other) * 12;
+        const annualSpending = annualRent + annualTaxableSpending;
 
         // 1. 社会保険料の概算 (約15%)
         const socialInsurance = Math.floor(income * 0.15);
@@ -162,24 +259,23 @@
         // 5. 住民税の概算 (約10% + 均等割5000円)
         const residentTax = taxableResidentTax > 0 ? Math.floor(taxableResidentTax * 0.10) + 5000 : 0;
 
-        // 6. 消費税の概算 (支出は税込と仮定し、10%計算：支出 × 10/110)
-        // ※軽減税率(8%)は考慮せず一律10%で計算
-        const consumptionTax = Math.floor(spending * (10 / 110));
-        const pureSpending = spending - consumptionTax; // 税抜の支出
+        // 6. 消費税の概算 (家賃と貯金は非課税として除外し、10%計算)
+        const consumptionTax = Math.floor(annualTaxableSpending * (10 / 110));
+        const pureSpending = annualSpending - consumptionTax; // 税抜の総支出（家賃含む）
 
-        // 7. 手元に残るお金 (貯金等)
-        let remainingMoney = income - socialInsurance - incomeTax - residentTax - spending;
-        if (remainingMoney < 0) remainingMoney = 0;
+        // 7. 計算上の余り（収入から各種税金・支出・貯金を引いた残り）
+        let remainingMoney = income - socialInsurance - incomeTax - residentTax - annualSpending - annualSavings;
+        if (remainingMoney < 0) remainingMoney = 0; // マイナス（赤字）の場合は0表示
 
         // 総負担額
         const totalTaxes = socialInsurance + incomeTax + residentTax + consumptionTax;
 
         // UIの更新
-        updateUI(income, socialInsurance, incomeTax, residentTax, consumptionTax, pureSpending, remainingMoney, totalTaxes);
-        drawChart(socialInsurance, incomeTax, residentTax, consumptionTax, pureSpending, remainingMoney);
+        updateUI(income, socialInsurance, incomeTax, residentTax, consumptionTax, pureSpending, annualSavings, remainingMoney, totalTaxes);
+        drawChart(socialInsurance, incomeTax, residentTax, consumptionTax, pureSpending, annualSavings, remainingMoney);
     }
 
-    function updateUI(income, soc, incTax, resTax, consTax, spend, remain, total) {
+    function updateUI(income, soc, incTax, resTax, consTax, spend, savings, remain, total) {
         document.getElementById('resultSection').style.display = 'flex';
         
         const detailsHtml = `
@@ -188,18 +284,18 @@
             <div class="detail-item"><span>社会保険料:</span> <span>${soc.toLocaleString()} 円</span></div>
             <div class="detail-item"><span>所得税:</span> <span>${incTax.toLocaleString()} 円</span></div>
             <div class="detail-item"><span>住民税:</span> <span>${resTax.toLocaleString()} 円</span></div>
-            <div class="detail-item"><span>消費税:</span> <span>${consTax.toLocaleString()} 円</span></div>
-            <div class="detail-item"><span>その他の支出(税抜):</span> <span>${spend.toLocaleString()} 円</span></div>
-            <div class="detail-item"><span>手元に残るお金(貯蓄等):</span> <span>${remain.toLocaleString()} 円</span></div>
+            <div class="detail-item"><span>消費税(家賃以外から算出):</span> <span>${consTax.toLocaleString()} 円</span></div>
+            <div class="detail-item"><span>その他の支出(税抜・家賃含):</span> <span>${spend.toLocaleString()} 円</span></div>
+            <div class="detail-item"><span>入力した貯金額:</span> <span>${savings.toLocaleString()} 円</span></div>
+            <div class="detail-item"><span>未割り当ての余り:</span> <span>${remain.toLocaleString()} 円</span></div>
             <div class="detail-item total"><span>国・自治体に納めた総額:</span> <span>${total.toLocaleString()} 円</span></div>
         `;
         document.getElementById('detailsList').innerHTML = detailsHtml;
     }
 
-    function drawChart(soc, incTax, resTax, consTax, spend, remain) {
+    function drawChart(soc, incTax, resTax, consTax, spend, savings, remain) {
         const ctx = document.getElementById('taxChart').getContext('2d');
         
-        // 既存のグラフがあれば破棄して再描画
         if (taxChartInstance) {
             taxChartInstance.destroy();
         }
@@ -207,16 +303,17 @@
         taxChartInstance = new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: ['社会保険料', '所得税', '住民税', '消費税', 'その他の支出(税抜)', '手元に残るお金'],
+                labels: ['社会保険料', '所得税', '住民税', '消費税', '生活費(税抜)', '貯金', '未割り当て'],
                 datasets: [{
-                    data: [soc, incTax, resTax, consTax, spend, remain],
+                    data: [soc, incTax, resTax, consTax, spend, savings, remain],
                     backgroundColor: [
-                        '#e74c3c', // 赤: 社会保険
-                        '#e67e22', // オレンジ: 所得税
+                        '#3498db', // 水色: 社会保険（指定）
+                        '#f39c12', // オレンジ: 所得税
                         '#f1c40f', // 黄色: 住民税
-                        '#9b59b6', // 紫: 消費税
+                        '#e74c3c', // 赤色: 消費税（指定）
                         '#95a5a6', // 灰: 支出
-                        '#2ecc71'  // 緑: 残り
+                        '#2ecc71', // 緑: 貯金
+                        '#ecf0f1'  // 薄灰: 余り
                     ],
                     borderWidth: 1
                 }]
